@@ -12,6 +12,7 @@ public class krazyTalkScript : MonoBehaviour
     public TextMesh text;
     public MeshRenderer[] btnColors;
     public Material lit, held, blank, done;
+    public KMRuleSeedable ruleseed;
 
     private static int _moduleIdCounter = 1;
     private int _moduleId;
@@ -33,10 +34,10 @@ public class krazyTalkScript : MonoBehaviour
 
     private string[,] releaseMessages =
     {
-        { "", "", "", "" },
-        { "", "", "", "" },
-        { "", "", "", "" },
-        { "", "", "", "" }
+        { "", "", "", "", "", "" },
+        { "", "", "", "", "", "" },
+        { "", "", "", "", "", ""},
+        { "", "", "", "", "", "" }
     };
 
     private readonly string[] phrases =
@@ -53,7 +54,7 @@ public class krazyTalkScript : MonoBehaviour
         "← ← → ← → →", "1 3 2 4", "BLANK", "LITERALLY BLANK",
         "..", "PERIOD PERIOD", "STOP.", "WE JUST BLEW UP", "THE WORD LEFT", "LEFT",
         "IT'S SHOWING\nNOTHING", "THE FOLLOWING\nSENTENCE THE\nWORD NOTHING", "HOLD ON IT'S\nBLANK", "NO, LITERALLY\nNOTHING", "LITERALLY\nNOTHING",
-        "THIS ONE IS ALL\nARROW SYMBOLS\nNO WORDS"
+        "THIS ONE IS ALL\nARROW SYMBOLS\nNO WORDS", "FULLSTOP FULLSTOP", "HOLD ON CRAZY TALK WHILE I DO THIS NEEDY", "THERE'S NOTHING", "NOTHING"
     };
     private readonly string[] regularCrazyTalkPhrases =
     {
@@ -71,14 +72,13 @@ public class krazyTalkScript : MonoBehaviour
         { "”", "End quote.", "End quote.", "'", "", "", "", "", "", "Stop.", "Stop.", "I think. It went by\npretty fast.", "I think.", "Holy crap that was\nfast.",
         "Holy crap that went\nby fast.", "Fullstop.", "Stop.", "But spelled wrong.", "But spelled rong.", "In single quotes.", "In double quotes." };
 
-    private readonly int[] phraseValues = { 0, 1, 4, 1, 8, 9, 6, 0, 0, 9, 3, 5, 6, 7, 7, 2, 8, 8, 2, 4, 8, 6, 3, 7, 4, 2, 3, 9, 5, 2, 7, 3, 1, 9, 6, 0, 5, 5, 1, 4 };
-    private readonly int[] surroundingValues = { 4, 3, 6, 1, 7, 2, 5, 9, 8, 0, 3, 7, 5, 2, 8, 6, 1, 9, 0, 4, 0 };
+    private int[] phraseValues = { 0, 1, 4, 1, 8, 9, 6, 0, 0, 9, 3, 5, 6, 7, 7, 2, 8, 8, 2, 4, 4, 6, 3, 7, 4, 2, 3, 9, 5, 2, 7, 3, 1, 9, 6, 0, 5, 5, 1, 8 };
+    private int[] surroundingValues = { 4, 3, 6, 1, 7, 2, 5, 9, 8, 0, 3, 7, 5, 2, 8, 6, 1, 9, 0, 4, 0 };
 
     private int shownScreen = 0;
     private bool[] finishedScreens = { false, false, false, false };
     private int[] shownMsg = { 0, 0, 0, 0 };
-
-    // Use this for initialization
+    
     void Start()
     {
         _moduleId = _moduleIdCounter++;
@@ -403,5 +403,13 @@ public class krazyTalkScript : MonoBehaviour
 
             yield return new WaitForSeconds(.2f);
         }
+    }
+
+    void SetUpRuleseed()
+    {
+        var rnd = ruleseed.GetRNG();
+
+        rnd.ShuffleFisherYates(phraseValues);
+        rnd.ShuffleFisherYates(surroundingValues);
     }
 }
