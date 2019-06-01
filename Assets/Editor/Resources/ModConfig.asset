@@ -14,8 +14,8 @@ MonoBehaviour:
   id: krazyTalk
   title: Krazy Talk
   description: "\"Quote, it says 'It says, start: \"It says: Quote... 'Quote, end
-    quote.' Fullstop.\" End quote'. End quote.\"\r\n\r\nManuals:\nHTML: Coming soon\u2122.\nPDF:
-    Coming soon\u2122."
+    quote.' Fullstop.\" End quote'. End quote.\"\r\n\r\nManuals:\nHTML: https://ktane.timwi.de/HTML/Krazy%20Talk.html.\nPDF:
+    https://ktane.timwi.de/PDF/Krazy%20Talk.pdfl."
   version: 
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 7b19fbffa6e28ea42905b0e1d6852818, type: 3}

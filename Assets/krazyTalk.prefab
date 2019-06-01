@@ -207,6 +207,7 @@ GameObject:
   - component: {fileID: 114174370238271274}
   - component: {fileID: 114278449472404552}
   - component: {fileID: 114133906211482682}
+  - component: {fileID: 114548654670278286}
   m_Layer: 0
   m_Name: krazyTalk
   m_TagString: Untagged
@@ -2437,6 +2438,9 @@ MonoBehaviour:
   held: {fileID: 2100000, guid: afa024c3dc2c11a47bc3a8ab51f7648a, type: 2}
   blank: {fileID: 2100000, guid: 97b470e803453c048b6a0f458b96aec1, type: 2}
   done: {fileID: 2100000, guid: cbf3d1f757e21af41a34b0f109cbce32, type: 2}
+  ruleseed: {fileID: 114548654670278286}
+  TwitchHelpMessage: Use !{0} hold 1 on 0 or !{0} release 1 on 0 to hold/release a
+    certain button on a number. Buttons are numbered 1-4 in reading order.
 --- !u!114 &114278624479046642
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2538,6 +2542,18 @@ MonoBehaviour:
   ModuleType: krazyTalk
   ModuleDisplayName: Krazy Talk
   RequiresTimerVisibility: 1
+--- !u!114 &114548654670278286
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1419935367890620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf69c2de51bd3c43bbd9bc22578ee08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _seed: 1
 --- !u!114 &114565982084022702
 MonoBehaviour:
   m_ObjectHideFlags: 1

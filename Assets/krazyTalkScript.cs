@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class krazyTalkScript : MonoBehaviour
 {
@@ -21,7 +22,6 @@ public class krazyTalkScript : MonoBehaviour
     private int[] holdTimes = { 0, 0, 0, 0 };
     private int[] releaseTimes = { 0, 0, 0, 0 };
 
-    bool holdSuccessful;
     int pressedBtns = 0;
 
     private string[,] holdMessages =
@@ -78,6 +78,7 @@ public class krazyTalkScript : MonoBehaviour
     private int shownScreen = 0;
     private bool[] finishedScreens = { false, false, false, false };
     private int[] shownMsg = { 0, 0, 0, 0 };
+    private bool[] heldBtns = { false, false, false, false };
     
     void Start()
     {
@@ -289,7 +290,7 @@ public class krazyTalkScript : MonoBehaviour
             if (time == holdTimes[btnNum])
             {
                 DebugMsg("That was right.");
-                holdSuccessful = true;
+                heldBtns[btnNum] = true;
 
                 StartCoroutine("FastCycle", btnNum);
             }
@@ -300,7 +301,7 @@ public class krazyTalkScript : MonoBehaviour
                 btnColors[btnNum].material = blank;
 
                 DebugMsg("That was wrong. STRIKE!");
-                holdSuccessful = false;
+                heldBtns[btnNum] = false;
 
                 StartCoroutine("Cycle");
             }
@@ -309,7 +310,7 @@ public class krazyTalkScript : MonoBehaviour
 
     void BtnReleased(int btnNum)
     {
-        if (holdSuccessful && !solved)
+        if (heldBtns[btnNum] == true && !solved)
         {
             var time = (int)Info.GetTime() % 10;
 
@@ -318,6 +319,8 @@ public class krazyTalkScript : MonoBehaviour
 
             StartCoroutine("Cycle");
             StopCoroutine("FastCycle");
+
+            heldBtns[btnNum] = false;
 
             if (time == releaseTimes[btnNum])
             {
@@ -411,5 +414,79 @@ public class krazyTalkScript : MonoBehaviour
 
         rnd.ShuffleFisherYates(phraseValues);
         rnd.ShuffleFisherYates(surroundingValues);
+    }
+
+    public string TwitchHelpMessage = "Use !{0} hold 1 on 0 or !{0} release 1 on 0 to hold/release a certain button on a number. Buttons are numbered 1-4 in reading order.";
+    IEnumerator ProcessTwitchCommand(string cmd)
+    {
+        if ((cmd.ToLowerInvariant().StartsWith("hold ") && cmd.Length == 11) || (cmd.ToLowerInvariant().StartsWith("release ") && cmd.Length == 14))
+        {
+            string btnString, time;
+            if (cmd.ToLowerInvariant().StartsWith("hold "))
+            {
+                btnString = cmd[5].ToString();
+                time = cmd[10].ToString();
+            }
+
+            else
+            {
+                btnString = cmd[8].ToString();
+                time = cmd[13].ToString();
+            }
+
+            int btnNum;
+            string[] numbers = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
+            if (btnString == "1")
+                btnNum = 0;
+
+            else if (btnString == "2")
+                btnNum = 1;
+
+            else if (btnString == "3")
+                btnNum = 2;
+
+            else if (btnString == "4")
+                btnNum = 3;
+
+            else
+            {
+                yield return "sendtochaterror That's not a button I can press.";
+                yield break;
+            }
+
+            if (!numbers.Contains(time))
+            {
+                yield return "sendtochaterror That's not a time I can use.";
+                yield break;
+            }
+
+            if (cmd.ToLowerInvariant().StartsWith("hold ") && heldBtns.Contains(true))
+            {
+                yield return "sendtochaterror A button is already held.";
+                yield break;
+            }
+
+            else if (cmd.ToLowerInvariant().StartsWith("release ") && heldBtns[btnNum] == false)
+            {
+                yield return "sendtochaterror That button hasn't been held yet.";
+                yield break;
+            }
+
+            while (!Info.GetFormattedTime().EndsWith(time))
+            {
+                yield return new WaitForSeconds(.5f);
+            }
+
+            if (cmd.ToLowerInvariant().StartsWith("hold "))
+                BtnHeld(btnNum);
+            else
+                BtnReleased(btnNum);
+
+            yield break;
+        }
+
+        else
+            yield break;
     }
 }
