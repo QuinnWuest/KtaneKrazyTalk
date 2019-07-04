@@ -473,6 +473,7 @@ public class krazyTalkScript : MonoBehaviour
                 yield break;
             }
 
+            yield return null;
             while (!Info.GetFormattedTime().EndsWith(time))
             {
                 yield return new WaitForSeconds(.5f);
