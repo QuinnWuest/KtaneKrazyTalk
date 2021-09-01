@@ -67,9 +67,9 @@ public class krazyTalkScript : MonoBehaviour
         "It’s the one with\nthe menagerie\nmanager.", "Do you wanna\nplay Fortnite?", ""
     };
     private readonly string[] starts =
-        { "“ ", "Quote:", "Quote...", "' ", "It says,", "It says:", "It says comma", "Wait, never mind,", "Never mind,", "Start:", "Start.", "", "", "", "", "", "", "", "", "", "" };
+        { "“", "Quote:", "Quote...", "'", "It says,", "It says:", "It says comma", "Wait, never mind,", "Never mind,", "Start:", "Start.", "", "", "", "", "", "", "", "", "", "" };
     private readonly string[] ends =
-        { " ”", "End quote.", "End quote.", " '", "", "", "", "", "", "Stop.", "Stop.", "I think. It went by\npretty fast.", "I think.", "Holy crap that was\nfast.",
+        { "”", "End quote.", "End quote.", "'", "", "", "", "", "", "Stop.", "Stop.", "I think. It went by\npretty fast.", "I think.", "Holy crap that was\nfast.",
         "Holy crap that went\nby fast.", "Fullstop.", "Stop.", "But spelled wrong.", "But spelled rong.", "In single quotes.", "In double quotes." };
 
     private int[] phraseValues = { 0, 1, 4, 1, 8, 9, 6, 0, 0, 9, 3, 5, 6, 7, 7, 2, 8, 8, 2, 4, 4, 6, 3, 7, 4, 2, 3, 9, 5, 2, 7, 3, 1, 9, 6, 0, 5, 5, 1, 8 };
@@ -79,7 +79,7 @@ public class krazyTalkScript : MonoBehaviour
     private bool[] finishedScreens = { false, false, false, false };
     private int[] shownMsg = { 0, 0, 0, 0 };
     private bool[] heldBtns = { false, false, false, false };
-
+    
     void Start()
     {
         _moduleId = _moduleIdCounter++;
@@ -110,7 +110,7 @@ public class krazyTalkScript : MonoBehaviour
                 BtnReleased(j);
             };
         }
-
+        
         for (int i = 0; i < 4; i++)
         {
             btnColors[i].material = blank;
@@ -149,7 +149,7 @@ public class krazyTalkScript : MonoBehaviour
                     {
                         int rndStart = Random.Range(0, starts.Length);
 
-                        if (starts[rndStart] == "" || starts[rndStart] == "' " || starts[rndStart] == "“ ")
+                        if (starts[rndStart] == "" || starts[rndStart] == "'" || starts[rndStart] == "“")
                         {
                             holdMessages[i, x] = holdMessages[i, x].Insert(0, starts[rndStart]);
                         }
@@ -159,7 +159,7 @@ public class krazyTalkScript : MonoBehaviour
                             holdMessages[i, x] = holdMessages[i, x].Insert(0, starts[rndStart] + "\n");
                         }
 
-                        if (ends[rndStart] == "" || ends[rndStart] == " '" || ends[rndStart] == " ”")
+                        if (ends[rndStart] == "" || ends[rndStart] == "'" || ends[rndStart] == "”")
                         {
                             holdMessages[i, x] = holdMessages[i, x] + ends[rndStart];
                         }
@@ -264,7 +264,7 @@ public class krazyTalkScript : MonoBehaviour
         {
             for (int x = 0; x < 6; x++)
             {
-                DebugMsg("One message for Screen #" + (i + 1) + " is " + holdMessages[i, x].Replace("\n", " "));
+                DebugMsg("One message for Screen #" + (i + 1) + " is " + holdMessages[i, x].Replace("\n"," "));
             }
         }
     }
@@ -274,7 +274,7 @@ public class krazyTalkScript : MonoBehaviour
         if (!solved && !finishedScreens[btnNum])
         {
             var time = (int)Info.GetTime() % 10;
-
+            
             StopCoroutine("Cycle");
 
             DebugMsg("You pressed button #" + (btnNum + 1) + " when the last digit of the timer was " + time + ".");
@@ -315,7 +315,7 @@ public class krazyTalkScript : MonoBehaviour
             var time = (int)Info.GetTime() % 10;
 
             DebugMsg("You released button #" + (btnNum + 1) + " when the last digit of the timer was " + time + ".");
-            DebugMsg("You were supposed to release it when the last digit of the timer was " + releaseTimes[btnNum] + ".");
+            DebugMsg("You were supposed to release it when the last digit of the timer was " + holdTimes[btnNum] + ".");
 
             StartCoroutine("Cycle");
             StopCoroutine("FastCycle");
@@ -474,57 +474,20 @@ public class krazyTalkScript : MonoBehaviour
             }
 
             yield return null;
-            while (!((int)Info.GetTime()).ToString().EndsWith(time))
+            while (!Info.GetFormattedTime().EndsWith(time))
             {
-                yield return "trycancel";
+                yield return new WaitForSeconds(.5f);
             }
 
             if (cmd.ToLowerInvariant().StartsWith("hold "))
-                btns[btnNum].OnInteract();
+                BtnHeld(btnNum);
             else
-                btns[btnNum].OnInteractEnded();
+                BtnReleased(btnNum);
 
             yield break;
         }
 
         else
             yield break;
-    }
-
-    IEnumerator TwitchHandleForcedSolve()
-    {
-        int heldBtn = -1;
-        while (!solved)
-        {
-            nextStage:
-            yield return null;
-            if (!heldBtns.Contains(true))
-            {
-                notYetHeld:
-                for (int i = 0; i < 4; i++)
-                {
-                    if (!finishedScreens[i] && (int)Info.GetTime() % 10 == holdTimes[i])
-                    {
-                        btns[i].OnInteract();
-                        heldBtn = i;
-                        goto nowHolding;
-                    }
-                }
-                yield return true;
-                goto notYetHeld;
-            }
-            nowHolding:
-            yield return null;
-            while ((int)Info.GetTime() % 10 != releaseTimes[heldBtn])
-            {
-                yield return true;
-            }
-            btns[heldBtn].OnInteractEnded();
-            if (!solved)
-            {
-                heldBtn = -1;
-                goto nextStage;
-            }
-        }
     }
 }
