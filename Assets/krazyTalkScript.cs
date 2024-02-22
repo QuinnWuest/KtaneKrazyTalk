@@ -54,7 +54,7 @@ public class krazyTalkScript : MonoBehaviour
         "← ← → ← → →", "1 3 2 4", "BLANK", "LITERALLY BLANK",
         "..", "PERIOD PERIOD", "STOP.", "WE JUST BLEW UP", "THE WORD LEFT", "LEFT",
         "IT'S SHOWING\nNOTHING", "THE FOLLOWING\nSENTENCE THE\nWORD NOTHING", "HOLD ON IT'S\nBLANK", "NO, LITERALLY\nNOTHING", "LITERALLY\nNOTHING",
-        "THIS ONE IS ALL\nARROW SYMBOLS\nNO WORDS", "FULLSTOP FULLSTOP", "HOLD ON CRAZY TALK WHILE I DO THIS NEEDY", "THERE'S NOTHING", "NOTHING"
+        "THIS ONE IS ALL\nARROW SYMBOLS\nNO WORDS", "FULLSTOP FULLSTOP", "HOLD ON CRAZY\nTALK WHILE I DO\nTHIS NEEDY", "THERE'S NOTHING", "NOTHING"
     };
     private readonly string[] regularCrazyTalkPhrases =
     {
@@ -79,6 +79,7 @@ public class krazyTalkScript : MonoBehaviour
     private bool[] finishedScreens = { false, false, false, false };
     private int[] shownMsg = { 0, 0, 0, 0 };
     private bool[] heldBtns = { false, false, false, false };
+    private bool _isHolding;
 
     void Start()
     {
@@ -95,6 +96,9 @@ public class krazyTalkScript : MonoBehaviour
 
             btns[i].OnInteract += delegate ()
             {
+                if (_isHolding)
+                    return false;
+                _isHolding = true;
                 BtnHeld(j);
                 btns[j].AddInteractionPunch();
                 return false;
@@ -107,6 +111,9 @@ public class krazyTalkScript : MonoBehaviour
 
             btns[i].OnInteractEnded += delegate ()
             {
+                if (!_isHolding)
+                    return;
+                _isHolding = false;
                 BtnReleased(j);
             };
         }
