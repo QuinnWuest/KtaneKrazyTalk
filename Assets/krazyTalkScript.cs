@@ -80,6 +80,7 @@ public class krazyTalkScript : MonoBehaviour
     private int[] shownMsg = { 0, 0, 0, 0 };
     private bool[] heldBtns = { false, false, false, false };
     private bool _isHolding;
+    private bool TwitchPlaysActive;
 
     void Start()
     {
@@ -96,11 +97,11 @@ public class krazyTalkScript : MonoBehaviour
 
             btns[i].OnInteract += delegate ()
             {
+                btns[j].AddInteractionPunch();
                 if (_isHolding)
                     return false;
                 _isHolding = true;
                 BtnHeld(j);
-                btns[j].AddInteractionPunch();
                 return false;
             };
         }
@@ -309,6 +310,8 @@ public class krazyTalkScript : MonoBehaviour
 
                 DebugMsg("That was wrong. STRIKE!");
                 heldBtns[btnNum] = false;
+                if (TwitchPlaysActive)
+                    btns[btnNum].OnInteractEnded();
 
                 StartCoroutine("Cycle");
             }
